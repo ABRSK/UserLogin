@@ -8,9 +8,18 @@
 import UIKit
 
 class WelcomeViewController: UIViewController {
+    
+    @IBOutlet var welcomeLabel: UILabel!
+    @IBOutlet var logoutButton: UIButton!
+    
+    var username: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        logoutButton.layer.cornerRadius = 15
+        
+        welcomeLabel.text = "Welcome, \(username.capitalized)"
         
     }
 

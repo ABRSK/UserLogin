@@ -7,22 +7,34 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var usernameField: UITextField!
     @IBOutlet var passwordField: UITextField!
     @IBOutlet var loginButton: UIButton!
     
     private let username = "user"
-    private let password = "password"
+    private let password = "pass"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loginButton.layer.cornerRadius = 15
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+        
+        welcomeVC.username = usernameField.text
     }
     
     @IBAction func loginButtonPressed() {
-        showLoginFailedAlert()
+
+        if !checkUsername() || !checkPassword() {
+            showLoginFailedAlert()
+        }
+        
     }
     
     @IBAction func needHintPressed() {
@@ -31,7 +43,7 @@ class ViewController: UIViewController {
             and: """
                  Maybe it is something like:
                  
-                 "username"?
+                 "user"?
                  """
         )
     }
@@ -42,11 +54,15 @@ class ViewController: UIViewController {
             and: """
                  It might be something like:
                  
-                 "password"?
+                 "pass"?
                  """
         )
     }
     
+    @IBAction func unwind(for segue: UIStoryboardSegue) {
+        usernameField.text = ""
+        passwordField.text = ""
+    }
 
 }
 
@@ -73,4 +89,32 @@ extension ViewController {
         alert.addAction(closeAction)
         present(alert, animated: true)
     }
+    
+    private func checkUsername() -> Bool {
+        if usernameField.text == username {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    private func checkPassword() -> Bool {
+        if passwordField.text == password {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func textFieldShouldReturn(_ field: UITextField) -> Bool {
+        if field.returnKeyType == .next {
+            passwordField.becomeFirstResponder()
+        } else if field.returnKeyType == .done {
+            loginButtonPressed()
+            performSegue(withIdentifier: "showWelcomeVC", sender: nil)
+        }
+        
+        return true
+    }
+    
 }
